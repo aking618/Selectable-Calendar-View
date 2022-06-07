@@ -8,11 +8,16 @@
 import Foundation
 import SwiftUI
 
+public struct ColorPair {
+    public let standard: Color = .cyan
+    public let highlighted: Color = .blue
+}
+
 @available(iOS 15, *)
 @available(macOS 12, *)
 extension View {
     @ViewBuilder
-    func addCircularBackground(isFilled: Bool, isSelected: Bool, highlightColor: Color = .blue, normalColor: Color = .cyan) -> some View {
+    func addCircularBackground(isFilled: Bool, isSelected: Bool, colorPair: ColorPair) -> some View {
         self
             .padding(9)
         #if os(macOS)
@@ -22,13 +27,13 @@ extension View {
         #endif
             .background(
                 Circle()
-                    .foregroundColor(isSelected ? highlightColor : normalColor)
+                    .foregroundColor(isSelected ? colorPair.highlighted : colorPair.standard)
                     .frame(width: 35, height: 35)
                     .opacity(isFilled ? 1.0 : 0.5)
                     .padding(isSelected ? 3 : 0)
                     .overlay(
                         Circle()
-                            .stroke(highlightColor, lineWidth: isSelected ? 2 : 0)
+                            .stroke(colorPair.highlighted, lineWidth: isSelected ? 2 : 0)
                     )
             )
     }

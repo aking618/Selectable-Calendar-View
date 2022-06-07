@@ -34,7 +34,7 @@ extension Date {
         return resultDates
     }
     
-    func isSameDay(comparingTo: Date) -> Bool {
+    public func isSameDay(comparingTo: Date) -> Bool {
         let selfComponents = Calendar.current.dateComponents([.year, .month, .day], from: self)
         let comparingComponents = Calendar.current.dateComponents([.year, .month, .day], from: comparingTo)
         guard let selfYear = selfComponents.year,

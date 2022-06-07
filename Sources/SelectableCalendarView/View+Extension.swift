@@ -9,8 +9,16 @@ import Foundation
 import SwiftUI
 
 public struct ColorPair {
-    public let standard: Color = .cyan
-    public let highlighted: Color = .blue
+    public let standard: Color
+    
+    public init(standard: Color) {
+        self.standard = standard
+    }
+    
+    var highlighted: Color {
+        return standard.opacity(0.7)
+    }
+    
 }
 
 @available(iOS 15, *)

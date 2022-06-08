@@ -28,7 +28,7 @@ extension View {
                     }
                     .opacity(isFilled ? 1.0 : 0.5)
                     .padding(isSelected ? 3 : 0)
-//                    .foregroundColor(isSelected ? adjustedColor(gradient) : gradient)
+                    .foregroundColor(backgroundColors.first?.opacity(50) ?? .white)
             )
     }
     

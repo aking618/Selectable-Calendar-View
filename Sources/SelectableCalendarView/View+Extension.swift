@@ -28,7 +28,7 @@ extension View {
                     }
                     .opacity(isFilled ? 1.0 : 0.5)
                     .padding(isSelected ? 3 : 0)
-                    .foregroundColor(backgroundColors.first?.opacity(50) ?? .white)
+                    .foregroundColor(.primary)
             )
     }
     
@@ -44,7 +44,7 @@ extension View {
                 EmptyView()
             }
         default:
-            LinearGradient(colors: colors, startPoint: .top, endPoint: .bottom)
+            LinearGradient(colors: colors, startPoint: .topLeading, endPoint: .bottomTrailing)
         }
     }
     

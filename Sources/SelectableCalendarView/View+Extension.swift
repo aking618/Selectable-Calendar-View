@@ -22,6 +22,10 @@ extension View {
         #endif
             .background(
                 appripriateView(for: backgroundColors)
+                    .mask {
+                        Circle()
+                            .frame(width: 35, height: 35)
+                    }
                     .opacity(isFilled ? 1.0 : 0.5)
                     .padding(isSelected ? 3 : 0)
 //                    .foregroundColor(isSelected ? adjustedColor(gradient) : gradient)

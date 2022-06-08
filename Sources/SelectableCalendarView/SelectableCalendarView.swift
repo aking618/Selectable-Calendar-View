@@ -26,9 +26,9 @@ public struct SelectableCalendarView: View {
     // Provide a function; this class will ask if a specific date circle should be filled in (a darker color).
     var isDateCircleFilled: ((Date) -> Bool)?
     
-    var colorForDate: ((Date) -> Color)?
+    var colorForDate: ((Date) -> [Color])?
     
-    public init(monthToDisplay: Date, dateSelected: Binding<Date>, allowSwitchMonth: Bool = true, showMonthLabel: Bool = true, isDateCircleFilled: ((Date) -> Bool)? = nil, colorForDate: ((Date) -> Color)? = nil) {
+    public init(monthToDisplay: Date, dateSelected: Binding<Date>, allowSwitchMonth: Bool = true, showMonthLabel: Bool = true, isDateCircleFilled: ((Date) -> Bool)? = nil, colorForDate: ((Date) -> [Color])? = nil) {
         self._monthToDisplay = .init(initialValue: monthToDisplay)
         self._dateSelected = dateSelected
         self.allowSwitchMonth = allowSwitchMonth
@@ -84,7 +84,7 @@ public struct SelectableCalendarView: View {
                                 Text("\(date.getDayNumber())")
                                     .font(.system(size: 15))
                                     .id(date)
-                                    .addCircularBackground(isFilled: isDateCircleFilled(date), isSelected: dateSelected.isSameDay(comparingTo: date), color: colorForDate(date))
+                                    .addCircularBackground(isFilled: isDateCircleFilled(date), isSelected: dateSelected.isSameDay(comparingTo: date), backgroundColors: colorForDate(date))
                                     .onTapGesture {
                                         self.dateSelected = date
                                     }
@@ -92,7 +92,7 @@ public struct SelectableCalendarView: View {
                                 Text("\(date.getDayNumber())")
                                     .font(.system(size: 15))
                                     .id(date)
-                                    .addCircularBackground(isFilled: true, isSelected: dateSelected.isSameDay(comparingTo: date), color: colorForDate(date))
+                                    .addCircularBackground(isFilled: true, isSelected: dateSelected.isSameDay(comparingTo: date), backgroundColors: colorForDate(date))
                                     .onTapGesture {
                                         self.dateSelected = date
                                     }
@@ -100,7 +100,7 @@ public struct SelectableCalendarView: View {
                         } else {
                             Text("\(date.getDayNumber())")
                                 .font(.system(size: 15))
-                                .addCircularBackground(isFilled: false, isSelected: false, color: colorForDate(date))
+                                .addCircularBackground(isFilled: false, isSelected: false, backgroundColors: colorForDate(date))
                                 .hidden()
                         }
                     }
@@ -109,8 +109,8 @@ public struct SelectableCalendarView: View {
         }
     }
     
-    func colorForDate(_ date: Date) -> Color {
-        self.colorForDate?(date) ?? .cyan
+    func colorForDate(_ date: Date) -> [Color] {
+        self.colorForDate?(date) ?? [.accentColor]
     }
     
 }

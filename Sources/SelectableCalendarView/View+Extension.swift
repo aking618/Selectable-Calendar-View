@@ -12,7 +12,7 @@ import SwiftUI
 @available(macOS 12, *)
 extension View {
     @ViewBuilder
-    func addCircularBackground(isFilled: Bool, isSelected: Bool, color: Color) -> some View {
+    func addCircularBackground(isFilled: Bool, isSelected: Bool, backgroundColors: [Color]) -> some View {
         self
             .padding(9)
         #if os(macOS)
@@ -21,16 +21,27 @@ extension View {
             .foregroundColor(Color(uiColor: .systemBackground))
         #endif
             .background(
-                Circle()
-                    .foregroundColor(isSelected ? adjustedColor(color) : color)
-                    .frame(width: 35, height: 35)
+                appripriateView(for: backgroundColors)
                     .opacity(isFilled ? 1.0 : 0.5)
                     .padding(isSelected ? 3 : 0)
-                    .overlay(
-                        Circle()
-                            .stroke(adjustedColor(color), lineWidth: isSelected ? 2 : 0)
-                    )
+//                    .foregroundColor(isSelected ? adjustedColor(gradient) : gradient)
             )
+    }
+    
+    @ViewBuilder
+    private func appripriateView(for colors: [Color]) -> some View {
+        switch colors.count {
+        case 0:
+            EmptyView()
+        case 1:
+            if let color = colors.first {
+                color
+            } else {
+                EmptyView()
+            }
+        default:
+            LinearGradient(colors: colors, startPoint: .top, endPoint: .bottom)
+        }
     }
     
     private func adjustedColor(_ input: Color) -> Color {

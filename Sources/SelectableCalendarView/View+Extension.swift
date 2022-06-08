@@ -18,7 +18,7 @@ extension View {
         #if os(macOS)
             .foregroundColor(Color(cgColor: .black))
         #elseif os(iOS)
-            .foregroundColor(Color(uiColor: .systemBackground))
+            .foregroundColor(.primary)
         #endif
             .background(
                 appripriateView(for: backgroundColors)
@@ -28,7 +28,6 @@ extension View {
                     }
                     .opacity(isFilled ? 1.0 : 0.5)
                     .padding(isSelected ? 3 : 0)
-                    .foregroundColor(.primary)
             )
     }
     

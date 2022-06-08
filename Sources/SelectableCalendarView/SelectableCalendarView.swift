@@ -8,8 +8,8 @@
 import SwiftUI
 
 @available(macOS 12, *)
-@available(iOS 15, *)
-public struct SelectableCalendarView: View {
+@available(iOS 16, *)
+public struct SelectableCalendarView<BackgroundContent>: View where BackgroundContent: View {
     
     // 表示される月の任意の日に設定します（通常は1日）
     @State var monthToDisplay: Date
@@ -28,13 +28,32 @@ public struct SelectableCalendarView: View {
     
     var colorForDate: ((Date) -> [Color])?
     
-    public init(monthToDisplay: Date, dateSelected: Binding<Date>, allowSwitchMonth: Bool = true, showMonthLabel: Bool = true, isDateCircleFilled: ((Date) -> Bool)? = nil, colorForDate: ((Date) -> [Color])? = nil) {
+    var backgroundForDate: ((Date) -> BackgroundContent)?
+    
+    public init(
+        monthToDisplay: Date,
+        dateSelected: Binding<Date>,
+        allowSwitchMonth: Bool = true,
+        showMonthLabel: Bool = true,
+        dateBackgroundBuilder: ((Date) -> BackgroundContent)?
+    ) {
         self._monthToDisplay = .init(initialValue: monthToDisplay)
         self._dateSelected = dateSelected
         self.allowSwitchMonth = allowSwitchMonth
         self.showMonthLabel = showMonthLabel
-        self.isDateCircleFilled = isDateCircleFilled
-        self.colorForDate = colorForDate
+        self.backgroundForDate = dateBackgroundBuilder
+    }
+    
+    @ViewBuilder
+    private func backgroundBuilder(_ date: Date) -> some View {
+        if let backgroundForDate = backgroundForDate {
+            backgroundForDate(date)
+        } else {
+            Circle()
+                .foregroundColor(.teal)
+                .frame(width: 35, height: 35)
+                .padding(date.isSameDay(comparingTo: dateSelected) ? 3 : 0)
+        }
     }
     
     public var body: some View {
@@ -69,6 +88,7 @@ public struct SelectableCalendarView: View {
                         }
                 }
             }
+            
             LazyVGrid(columns: Array(repeating: GridItem(), count: 7)) {
                 // Week day labels
                 ForEach(["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"], id: \.self) { weekdayName in
@@ -78,39 +98,23 @@ public struct SelectableCalendarView: View {
                 // Day number text
                 Section {
                     ForEach(monthToDisplay.getDaysForMonth(), id: \.self) { date in
-                        // Only display days of the given month
-                        if Calendar.current.isDate(date, equalTo: monthToDisplay, toGranularity: .month) {
-                            if let isDateCircleFilled = isDateCircleFilled {
-                                Text("\(date.getDayNumber())")
-                                    .font(.system(size: 15))
-                                    .id(date)
-                                    .addCircularBackground(isFilled: isDateCircleFilled(date), isSelected: dateSelected.isSameDay(comparingTo: date), backgroundColors: colorForDate(date))
-                                    .onTapGesture {
-                                        self.dateSelected = date
-                                    }
-                            } else {
-                                Text("\(date.getDayNumber())")
-                                    .font(.system(size: 15))
-                                    .id(date)
-                                    .addCircularBackground(isFilled: true, isSelected: dateSelected.isSameDay(comparingTo: date), backgroundColors: colorForDate(date))
-                                    .onTapGesture {
-                                        self.dateSelected = date
-                                    }
-                            }
-                        } else {
+                        ZStack {
                             Text("\(date.getDayNumber())")
+                                .foregroundColor(.primary)
                                 .font(.system(size: 15))
-                                .addCircularBackground(isFilled: false, isSelected: false, backgroundColors: colorForDate(date))
-                                .hidden()
+                                .bold(date.isSameDay(comparingTo: dateSelected))
+                            
+                            backgroundBuilder(date)
+                        }
+                        .id(date)
+                        .opacity(Calendar.current.isDate(date, equalTo: monthToDisplay, toGranularity: .month) ? 1.0 : 0.5)
+                        .onTapGesture {
+                            self.dateSelected = date
                         }
                     }
                 }
             }
         }
-    }
-    
-    func colorForDate(_ date: Date) -> [Color] {
-        self.colorForDate?(date) ?? [.accentColor]
     }
     
 }

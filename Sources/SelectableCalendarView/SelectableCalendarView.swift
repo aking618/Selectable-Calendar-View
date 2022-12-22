@@ -26,7 +26,7 @@ public struct SelectableCalendarView: View {
     // Provide a function; this class will ask if a specific date circle should be filled in (a darker color).
     var isDateCircleFilled: ((Date) -> Bool)?
     
-    var colorForDate: ((Date) -> [Color])?
+    var colorForDate: ((Date) -> Color)
     
     var backgroundForDate: ((Date) -> AnyView)?
     
@@ -35,13 +35,15 @@ public struct SelectableCalendarView: View {
         dateSelected: Binding<Date>,
         allowSwitchMonth: Bool = true,
         showMonthLabel: Bool = true,
-        dateBackgroundBuilder: ((Date) -> AnyView)?
+        dateBackgroundBuilder: ((Date) -> AnyView)?,
+        colorForDate: @escaping ((Date) -> Color) = { _ in return .primary}
     ) {
         self._monthToDisplay = .init(initialValue: monthToDisplay)
         self._dateSelected = dateSelected
         self.allowSwitchMonth = allowSwitchMonth
         self.showMonthLabel = showMonthLabel
         self.backgroundForDate = dateBackgroundBuilder
+        self.colorForDate = colorForDate
     }
     
     @ViewBuilder
@@ -50,9 +52,8 @@ public struct SelectableCalendarView: View {
             backgroundForDate(date)
         } else {
             Circle()
-                .foregroundColor(.teal)
+                .foregroundColor(.secondary)
                 .frame(width: 35, height: 35)
-                .padding(date.isSameDay(comparingTo: dateSelected) ? 3 : 0)
         }
     }
     
@@ -101,7 +102,7 @@ public struct SelectableCalendarView: View {
                         ZStack {
                             backgroundBuilder(date)
                             Text("\(date.getDayNumber())")
-                                .foregroundColor(.primary)
+                                .foregroundColor(colorForDate(date))
                                 .font(.system(size: 15))
                                 .bold(date.isSameDay(comparingTo: dateSelected))
                         }

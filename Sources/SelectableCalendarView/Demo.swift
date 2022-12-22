@@ -15,7 +15,9 @@ public struct Demo: View {
     public var body: some View {
         VStack {
             Text("Currently selected: \(date.getDayNumber())")
-            SelectableCalendarView(monthToDisplay: Date(), dateSelected: $date, dateBackgroundBuilder: nil)
+            SelectableCalendarView(monthToDisplay: Date(), dateSelected: $date, dateBackgroundBuilder: nil) { date in
+                date.isSameDay(comparingTo: self.date) ? .green : .primary
+            }
         }
     }
 }

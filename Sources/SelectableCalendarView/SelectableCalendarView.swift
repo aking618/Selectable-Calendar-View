@@ -11,7 +11,6 @@ import SwiftUI
 @available(iOS 16, *)
 public struct SelectableCalendarView: View {
     
-    // 表示される月の任意の日に設定します（通常は1日）
     @State var monthToDisplay: Date
     
     // The date user selected
@@ -28,6 +27,8 @@ public struct SelectableCalendarView: View {
     
     var colorForDate: ((Date) -> Color)
     
+    var foregroundForDate: ((Date) -> AnyView)?
+    
     var backgroundForDate: ((Date) -> AnyView)?
     
     public init(
@@ -36,6 +37,7 @@ public struct SelectableCalendarView: View {
         allowSwitchMonth: Bool = true,
         showMonthLabel: Bool = true,
         dateBackgroundBuilder: ((Date) -> AnyView)?,
+        dateForgroundBuilder: ((Date) -> AnyView)?,
         colorForDate: @escaping ((Date) -> Color) = { _ in return .primary}
     ) {
         self._monthToDisplay = .init(initialValue: monthToDisplay)
@@ -44,6 +46,7 @@ public struct SelectableCalendarView: View {
         self.showMonthLabel = showMonthLabel
         self.backgroundForDate = dateBackgroundBuilder
         self.colorForDate = colorForDate
+        self.foregroundForDate = dateForgroundBuilder
     }
     
     @ViewBuilder
@@ -54,6 +57,19 @@ public struct SelectableCalendarView: View {
             Circle()
                 .foregroundColor(.secondary)
                 .frame(width: 35, height: 35)
+        }
+    }
+    
+    @ViewBuilder
+    private func foregroundBuilder(_ date: Date) -> some View {
+        if let foregroundForDate = foregroundForDate {
+            foregroundForDate(date)
+                .foregroundColor(colorForDate(date))
+        } else {
+            Text("\(date.getDayNumber())")
+                .foregroundColor(colorForDate(date))
+                .font(.system(size: 15))
+                .bold(date.isSameDay(comparingTo: dateSelected))
         }
     }
     
@@ -101,10 +117,7 @@ public struct SelectableCalendarView: View {
                     ForEach(monthToDisplay.getDaysForMonth(), id: \.self) { date in
                         ZStack {
                             backgroundBuilder(date)
-                            Text("\(date.getDayNumber())")
-                                .foregroundColor(colorForDate(date))
-                                .font(.system(size: 15))
-                                .bold(date.isSameDay(comparingTo: dateSelected))
+                            foregroundBuilder(date)
                         }
                         .id(date)
                         .opacity(Calendar.current.isDate(date, equalTo: monthToDisplay, toGranularity: .month) ? 1.0 : 0.5)
@@ -123,6 +136,6 @@ public struct SelectableCalendarView: View {
 @available(iOS 16, *)
 struct Demo_Previews: PreviewProvider {
     static var previews: some View {
-        Demo()
+        SelectableCalendarViewDemo()
     }
 }

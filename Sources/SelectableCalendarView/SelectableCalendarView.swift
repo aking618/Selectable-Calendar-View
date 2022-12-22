@@ -99,12 +99,11 @@ public struct SelectableCalendarView: View {
                 Section {
                     ForEach(monthToDisplay.getDaysForMonth(), id: \.self) { date in
                         ZStack {
+                            backgroundBuilder(date)
                             Text("\(date.getDayNumber())")
                                 .foregroundColor(.primary)
                                 .font(.system(size: 15))
                                 .bold(date.isSameDay(comparingTo: dateSelected))
-                            
-                            backgroundBuilder(date)
                         }
                         .id(date)
                         .opacity(Calendar.current.isDate(date, equalTo: monthToDisplay, toGranularity: .month) ? 1.0 : 0.5)
@@ -117,4 +116,12 @@ public struct SelectableCalendarView: View {
         }
     }
     
+}
+
+@available(macOS 13, *)
+@available(iOS 16, *)
+struct Demo_Previews: PreviewProvider {
+    static var previews: some View {
+        Demo()
+    }
 }

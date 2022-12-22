@@ -7,9 +7,9 @@
 
 import SwiftUI
 
-@available(macOS 12, *)
+@available(macOS 13, *)
 @available(iOS 16, *)
-public struct SelectableCalendarView<BackgroundContent>: View where BackgroundContent: View {
+public struct SelectableCalendarView: View {
     
     // 表示される月の任意の日に設定します（通常は1日）
     @State var monthToDisplay: Date
@@ -28,14 +28,14 @@ public struct SelectableCalendarView<BackgroundContent>: View where BackgroundCo
     
     var colorForDate: ((Date) -> [Color])?
     
-    var backgroundForDate: ((Date) -> BackgroundContent)?
+    var backgroundForDate: ((Date) -> AnyView)?
     
     public init(
         monthToDisplay: Date,
         dateSelected: Binding<Date>,
         allowSwitchMonth: Bool = true,
         showMonthLabel: Bool = true,
-        dateBackgroundBuilder: ((Date) -> BackgroundContent)?
+        dateBackgroundBuilder: ((Date) -> AnyView)?
     ) {
         self._monthToDisplay = .init(initialValue: monthToDisplay)
         self._dateSelected = dateSelected

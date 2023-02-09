@@ -17,7 +17,7 @@ extension Date {
     
     func getMonthString() -> String {
         let formatter = DateFormatter()
-        formatter.dateFormat = "YYYY/MM"
+        formatter.dateFormat = "MMMM YYYY"
         return formatter.string(from: self)
     }
     

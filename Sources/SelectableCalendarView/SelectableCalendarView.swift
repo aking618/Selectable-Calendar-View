@@ -110,7 +110,7 @@ public struct SelectableCalendarView: View {
                 // Week day labels
                 ForEach(["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"], id: \.self) { weekdayName in
                     Text(weekdayName)
-                        .font(.system(size: 15).bold())
+                        .font(.caption.bold())
                 }
                 // Day number text
                 Section {
@@ -136,6 +136,10 @@ public struct SelectableCalendarView: View {
 @available(iOS 16, *)
 struct Demo_Previews: PreviewProvider {
     static var previews: some View {
-        SelectableCalendarViewDemo()
+        GeometryReader { geo in
+            SelectableCalendarViewDemo()
+                .frame(width: geo.size.width * 0.8, alignment: .center)
+        }
+            .previewDevice("iPhone 13 Mini")
     }
 }
